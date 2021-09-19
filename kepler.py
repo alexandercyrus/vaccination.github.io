@@ -272,6 +272,6 @@ w1.config = config
 # In[33]:
 
 
-w1.save_to_html(file_name='vaccination_map.html',read_only = True)
+w1.save_to_html(file_name='C:/Users/sesk2281/DataWarehouse/Personal Web Projects/vaccination.github.io/docs/index.html',read_only = True)
 
   
