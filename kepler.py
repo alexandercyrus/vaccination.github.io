@@ -1,33 +1,15 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# https://docs.kepler.gl/docs/keplergl-jupyter#2-add-data
-
-# In[1]:
-
-
 import pandas as pd
-
-
-# In[2]:
-
-
 import requests
-
-
-# In[3]:
 
 
 response = requests.get('https://nswdac-covid-19-postcode-heatmap.azurewebsites.net/datafiles/vaccination_metrics-v3.json')
 
 
-# In[4]:
-
-
 df = response.json()
 
-
-# In[5]:
 
 
 data_dict = []
@@ -36,26 +18,16 @@ for postcode in df.keys():
         data_dict.append([postcode,date]+[value  for stat_name,value in df[postcode][date].items()]) 
 
 
-# In[6]:
-
 
 df_f = pd.DataFrame(data_dict, columns=['postcode','date','totalVaccinations','firstDoses','fullyVaccinated',"ageUnder50Years","age50YearsAndOver","eligiblePopulation","percPopFullyVaccinatedRange",
 "percPopFullyVaccinated10WidthRange","percPopAtLeastFirstDoseRange","percPopAtLeastFirstDose10WidthRange"])
 
 
-# In[7]:
-
 
 response = requests.get('https://nswdac-covid-19-postcode-heatmap.azurewebsites.net/geojson/postcode_2016_nsw_simplified.json')
 
 
-# In[8]:
-
-
 geojson = response.json()
-
-
-# In[9]:
 
 
 import geopandas
@@ -64,99 +36,55 @@ postcode_geo = geopandas.read_file(url)
 #display(postcode_geo.head(5))
 
 
-# In[10]:
-
-
 #display(postcode_geo.head(5))
-
-
-# In[11]:
 
 
 postcode_geo.columns = ['POA_CODE16', 'POA_NAME16', 'AREASQKM16', 'geometry']
 
 
-# In[12]:
-
-
 postcode_geo.dropna(inplace=True)
-
-
-# In[13]:
 
 
 df_f=df_f[df_f['date'] == df_f['date'].max()]
 
 
-# In[14]:
-
 
 df_merged = pd.merge(postcode_geo,df_f,how='left',left_on='POA_CODE16',right_on='postcode');
-
-
-# In[15]:
 
 
 df_merged.shape
 
 
-# In[16]:
-
 
 df_merged = df_merged[df_merged['geometry']!=None]
-
-
-# In[17]:
 
 
 url = "https://nswdac-covid-19-postcode-heatmap.azurewebsites.net/datafiles/population.json"
 
 
-# In[18]:
-
 
 suburbs = pd.read_json(url)
-
-
-# In[19]:
 
 
 suburbs['POA_NAME16'] = suburbs['POA_NAME16'].astype('str')
 
 
-# In[20]:
-
-
 df_merged = pd.merge(df_merged,suburbs,how='left',left_on='postcode',right_on='POA_NAME16') 
-
-
-# In[21]:
 
 
 df_merged['Suburbs'] = df_merged['Combined']
 
-
-# In[22]:
 
 df_merged.dropna(subset=['percPopFullyVaccinatedRange'],inplace=True)
 
 import keplergl;
 
 
-# In[23]:
-
-
 # note that to manually change config, need to remove read_only
 w1 = keplergl.KeplerGl(height=500);
 
 
-# In[24]:
-
-
 w1.add_data(data=df_merged, name='Vaccination Rates')
-
-
-# In[30]:
 
 
 config = {'version': 'v1',
@@ -253,8 +181,6 @@ config = {'version': 'v1',
     31.1442867897876],
    'mapStyles': {}}}}
 
-
-# In[31]:
 
 
 w1.config = config
