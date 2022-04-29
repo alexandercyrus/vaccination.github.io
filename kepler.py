@@ -186,16 +186,8 @@ config = {'version': 'v1',
 w1.config = config
 
 
-# In[32]:
-
-
 # to display the map in the notebook run the name of the map
 #w1
-
-
-# To get the config of the map w1.config
-
-# In[33]:
 
 
 w1.save_to_html(file_name='C:/Users/sesk2281/DataWarehouse/Personal Web Projects/vaccination.github.io/docs/index.html',read_only = True)
